@@ -11,7 +11,9 @@
  * Requires the dev server to be running on port 3004.
  */
 
-import "dotenv/config"
+import dotenv from "dotenv"
+import path from "path"
+dotenv.config({ path: path.resolve(process.cwd(), ".env.local") })
 
 const BASE_URL = "http://localhost:3004"
 const ENDPOINT = `${BASE_URL}/api/v2/knowledge/llamaindex-search`

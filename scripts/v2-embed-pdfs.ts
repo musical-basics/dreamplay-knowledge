@@ -15,7 +15,9 @@
  *   - NEXT_PUBLIC_SUPABASE_URL + SUPABASE_SERVICE_KEY (for reading research_knowledgebase)
  */
 
-import "dotenv/config"
+import dotenv from "dotenv"
+import path from "path"
+dotenv.config({ path: path.resolve(process.cwd(), ".env.local") })
 import { GoogleGenAI } from "@google/genai"
 import { createClient as createSupabaseClient } from "@supabase/supabase-js"
 import pg from "pg"
