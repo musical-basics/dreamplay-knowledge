@@ -26,15 +26,24 @@ export const ContentGraphState = Annotation.Root({
 
     // ── Pipeline control ─────────────────────────────────
     track: Annotation<"FAST_TRACK" | "DEEP_TRACK">,
-    revision_count: Annotation<number>,
-    critic_feedback: Annotation<"PASS" | "FAIL" | "">,
+    revision_count: Annotation<number>({
+        reducer: (current, update) => current + update,
+        default: () => 0,
+    }),
+    critic_feedback: Annotation<string>({
+        reducer: (_current, update) => update,
+        default: () => "",
+    }),
 
     // ── Pipeline outputs ─────────────────────────────────
     draftHtml: Annotation<string>,
     refinedHtml: Annotation<string>,
     finalHtml: Annotation<string>,
     explanation: Annotation<string>,
-    citedResearchIds: Annotation<string[]>,
+    citedResearchIds: Annotation<string[]>({
+        reducer: (_current, update) => update,
+        default: () => [],
+    }),
 })
 
 /**

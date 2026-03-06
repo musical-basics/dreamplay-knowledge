@@ -10,8 +10,8 @@ import type { ContentState } from "../state"
  * Prompt extracted verbatim from pipeline.ts nodeAuditor().
  */
 export async function auditorNode(state: ContentState): Promise<Partial<ContentState>> {
-    const revisionCount = (state.revision_count || 0) + 1
-    console.log(`[V2 Auditor] Running QA audit (revision ${revisionCount})...`)
+    const currentRevision = (state.revision_count || 0) + 1 // For logging only; reducer handles state
+    console.log(`[V2 Auditor] Running QA audit (revision ${currentRevision})...`)
 
     const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! })
 
@@ -73,13 +73,13 @@ Output ONLY the JSON. No markdown fences.`
         .filter(doc => doc.url && updatedHtml.includes(doc.url))
         .map(doc => doc.id)
 
-    console.log(`[V2 Auditor] Verdict: ${verdict} (revision ${revisionCount})`)
+    console.log(`[V2 Auditor] Verdict: ${verdict} (revision ${currentRevision})`)
 
     return {
         finalHtml: updatedHtml,
         explanation,
         citedResearchIds: citedIds,
         critic_feedback: verdict,
-        revision_count: revisionCount,
+        revision_count: 1, // Additive reducer: +1 per audit pass
     }
 }
