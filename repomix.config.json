@@ -1,0 +1,33 @@
+{
+    "output": {
+        "filePath": "../dreamplay-knowledge-repomix.xml",
+        "style": "xml"
+    },
+    "ignore": {
+        "useGitignore": true,
+        "useDefaultPatterns": true,
+        "customPatterns": [
+            "node_modules/**",
+            ".next/**",
+            ".vercel/**",
+            ".git/**",
+            "pnpm-lock.yaml",
+            "pnpm-workspace.yaml",
+            "components/ui/**",
+            "public/**",
+            "*.ico",
+            "*.svg",
+            "*.png",
+            "*.jpg",
+            "*.DS_Store",
+            "next-env.d.ts",
+            "postcss.config.mjs",
+            "eslint.config.mjs",
+            "components.json",
+            "tsconfig.json",
+            "*.tsbuildinfo",
+            "*repomix*",
+            "migration.sql"
+        ]
+    }
+}
