@@ -9,6 +9,22 @@ import { Annotation } from "@langchain/langgraph"
  * Maps to the existing ContextPayload + PipelineResult from pipeline.ts.
  */
 
+// ── Shared Context Types ──────────────────────────────────
+export interface WorkerLogEntry {
+    node: string
+    action: string
+    timestamp: string
+}
+
+export interface FinalContextReport {
+    background_thinking: string
+    docs_retrieved: number
+    quotes_used: string[]
+    topics_covered: string[]
+    ctas_added: string[]
+    styling_used: string
+}
+
 export const ContentGraphState = Annotation.Root({
     // ── Input fields ─────────────────────────────────────
     userPrompt: Annotation<string>,
@@ -33,6 +49,20 @@ export const ContentGraphState = Annotation.Root({
     critic_feedback: Annotation<string>({
         reducer: (_current, update) => update,
         default: () => "",
+    }),
+
+    // ── Shared Context Ledger ────────────────────────────
+    worker_log: Annotation<WorkerLogEntry[]>({
+        reducer: (current, update) => [...current, ...update],
+        default: () => [],
+    }),
+    intermediate_changes: Annotation<string[]>({
+        reducer: (current, update) => [...current, ...update],
+        default: () => [],
+    }),
+    final_context_report: Annotation<FinalContextReport | null>({
+        reducer: (_current, update) => update,
+        default: () => null,
     }),
 
     // ── Pipeline outputs ─────────────────────────────────

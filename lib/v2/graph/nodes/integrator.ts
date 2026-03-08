@@ -6,8 +6,7 @@ import type { ContentState } from "../state"
  *
  * Technical compliance pass — resolves asset placeholders, injects
  * proper citation footnotes, enforces platform rules.
- *
- * Prompt extracted verbatim from pipeline.ts nodeIntegrator().
+ * Logs: what assets/citations were resolved.
  */
 export async function integratorNode(state: ContentState): Promise<Partial<ContentState>> {
     console.log(`[V2 Integrator] Applying technical compliance...`)
@@ -60,5 +59,17 @@ Output ONLY the refined HTML. No markdown fences, no explanations.`
 
     console.log(`[V2 Integrator] Refinement complete (${refined.length} chars)`)
 
-    return { refinedHtml: refined }
+    const assetCount = state.assets ? Object.keys(state.assets).length : 0
+    const citationCount = (state.researchDocs || []).length
+    const changeNote = `Technical compliance pass complete. Resolved ${assetCount} asset placeholder(s), mapped ${citationCount} citation(s) to footnotes, enforced platform rules. Output: ${refined.length} chars.`
+
+    return {
+        refinedHtml: refined,
+        intermediate_changes: [changeNote],
+        worker_log: [{
+            node: "Mailroom",
+            action: changeNote,
+            timestamp: new Date().toISOString(),
+        }],
+    }
 }

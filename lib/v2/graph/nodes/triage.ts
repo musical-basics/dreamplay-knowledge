@@ -5,7 +5,7 @@ import type { ContentState } from "../state"
  * V2 Node: Triage Router
  *
  * Classifies the request as FAST_TRACK (simple edit) or DEEP_TRACK (new content).
- * Prompt extracted verbatim from pipeline.ts triageRoute().
+ * Logs: routing decision + reasoning.
  */
 export async function triageNode(state: ContentState): Promise<Partial<ContentState>> {
     const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! })
@@ -30,14 +30,24 @@ Reply ONLY with 'FAST_TRACK' or 'DEEP_TRACK'.`
 
     console.log(`[V2 Triage] Routed to ${track}`)
 
-    return { track }
+    const changeNote = `Classified prompt as ${track}. ${track === "FAST_TRACK" ? "Simple edit — skipping research." : "Complex request — sending to Librarian for research."}`
+
+    return {
+        track,
+        intermediate_changes: [changeNote],
+        worker_log: [{
+            node: "Dispatcher",
+            action: changeNote,
+            timestamp: new Date().toISOString(),
+        }],
+    }
 }
 
 /**
  * V2 Node: Fast Track Drafter
  *
  * Single-shot edit for simple formatting/text changes.
- * Prompt extracted verbatim from pipeline.ts fastTrack().
+ * Logs: what was changed.
  */
 export async function fastTrackNode(state: ContentState): Promise<Partial<ContentState>> {
     const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY! })
@@ -68,9 +78,17 @@ Output ONLY the complete updated HTML. No explanations, no markdown fence.`
 
     console.log(`[V2 FastTrack] Quick edit applied`)
 
+    const changeNote = `Applied quick edit via Fast Track: "${state.userPrompt}". Single-shot, no research needed.`
+
     return {
         finalHtml: html,
         explanation: "Quick edit applied via Fast Track (single-shot).",
         citedResearchIds: [],
+        intermediate_changes: [changeNote],
+        worker_log: [{
+            node: "Shortcut",
+            action: changeNote,
+            timestamp: new Date().toISOString(),
+        }],
     }
 }

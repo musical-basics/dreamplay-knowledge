@@ -7,12 +7,7 @@ import type { ContentState } from "../state"
  *
  * Gathers all context (persona, mission, rules, knowledge chunks) from the DB,
  * then performs LLM-guided RAG to select the most relevant research documents.
- *
- * Logic extracted from:
- *   - pipeline.ts compileResearcherOutput()
- *   - copilot/route.ts deep track context assembly + RAG selection
- *
- * All Supabase queries use the service role key (bypasses RLS).
+ * Logs: what context was found and which docs were selected.
  */
 export async function researcherNode(state: ContentState): Promise<Partial<ContentState>> {
     const supabase = createClient()
@@ -132,6 +127,16 @@ export async function researcherNode(state: ContentState): Promise<Partial<Conte
         console.error("[V2 Researcher] RAG selection failed:", ragError)
     }
 
+    // ── Log what was gathered ─────────────────────────────
+    const docNames = researchDocs.map(d => `"${d.title}"`).join(", ")
+    const changeNote = [
+        `Loaded persona: ${selectedPersona?.name || "None"}.`,
+        `Loaded mission: ${selectedMission?.name || "None"}.`,
+        `Found ${allRules.length} platform rule(s).`,
+        `Found ${(activeChunks || []).length} knowledge chunk(s).`,
+        `RAG selected ${researchDocs.length} research doc(s)${researchDocs.length > 0 ? `: ${docNames}` : ""}.`,
+    ].join(" ")
+
     return {
         persona: selectedPersona,
         mission: selectedMission,
@@ -139,5 +144,11 @@ export async function researcherNode(state: ContentState): Promise<Partial<Conte
         contextBlock,
         researchBlock,
         researchDocs,
+        intermediate_changes: [changeNote],
+        worker_log: [{
+            node: "Librarian",
+            action: changeNote,
+            timestamp: new Date().toISOString(),
+        }],
     }
 }
