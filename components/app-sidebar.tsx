@@ -12,6 +12,7 @@ import {
     Tags,
     Brain,
     ChevronDown,
+    FlaskConical,
 } from "lucide-react"
 import {
     Sidebar,
@@ -56,6 +57,12 @@ const navSections = [
         items: [
             { title: "Directory", href: "/admin/research", icon: BookOpen },
             { title: "Tags", href: "/admin/research-tags", icon: Tags },
+        ],
+    },
+    {
+        label: "Testing",
+        items: [
+            { title: "Editor", href: "/admin/testing", icon: FlaskConical },
         ],
     },
 ]
