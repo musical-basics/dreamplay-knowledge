@@ -4,8 +4,6 @@ import { createClient } from "@/lib/supabase/server"
 import { GoogleGenAI } from "@google/genai"
 import type { ResearchDoc } from "@/lib/types"
 
-export type { ResearchDoc }
-
 export async function getKnowledgebase(): Promise<ResearchDoc[]> {
     const supabase = createClient()
     const { data, error } = await supabase

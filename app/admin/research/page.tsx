@@ -1,7 +1,8 @@
 "use client"
 
 import { useState, useEffect, useRef } from "react"
-import { getKnowledgebase, saveResearchDoc, toggleResearchStatus, deleteResearchDoc, extractPdf, extractFromR2, generateAbstract, type ResearchDoc } from "@/app/actions/knowledgebase"
+import { getKnowledgebase, saveResearchDoc, toggleResearchStatus, deleteResearchDoc, extractPdf, extractFromR2, generateAbstract } from "@/app/actions/knowledgebase"
+import type { ResearchDoc } from "@/lib/types"
 import { BookOpen, UploadCloud, Loader2, Plus, Trash2, X, Save, Zap, FileText, ExternalLink, ArrowUp, ArrowDown, Sparkles } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
